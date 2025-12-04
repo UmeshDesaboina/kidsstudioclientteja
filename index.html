@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>COCOMELON KIDS STUDIO</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --pink:#ff9ac6;
+      --pink-light:#ffe5f2;
+      --blue:#6ecff6;
+      --dark:#222;
+      --light:#fff7fb;
+      --muted:#6b6b6b;
+    }
+
+    /* ---------- Reset & base ---------- */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:'Montserrat',sans-serif;background:var(--light);color:var(--dark);line-height:1.5}
+    a{text-decoration:none;color:inherit}
+    .container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+    /* ---------- Transparent Header + Solid on Scroll ---------- */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 2000;
+      transition: background .35s ease, box-shadow .3s ease, padding .25s ease;
+      will-change: background, box-shadow;
+    }
+    .site-header.transparent {
+      background: rgba(17,17,17,0.12); /* subtle transparent so content not jumpy */
+      backdrop-filter: blur(6px);
+      box-shadow: none;
+      padding: 16px 0;
+    }
+    .site-header.solid {
+      background: #111;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.28);
+      padding: 10px 0;
+    }
+
+    /* ---------- Header Inner ---------- */
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      gap: 20px;
+    }
+
+    .logo-text{display:flex;flex-direction:column;line-height:1}
+    /* Bigger Logo Text */
+    .logo-line-1 {
+      font-weight: 900;
+      color: var(--pink);
+      font-size: 32px;
+    }
+    .logo-line-2 {
+      font-weight: 700;
+      color: var(--blue);
+      font-size: 18px;
+      letter-spacing: 0.6px;
+    }
+
+    /* Navigation */
+    .main-nav {
+      display: block;
+      position: relative;
+    }
+    .main-nav ul {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+      align-items:center;
+    }
+    .main-nav a {
+      color: #eee;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 8px 6px;
+      display:inline-block;
+    }
+    .main-nav a:focus,
+    .main-nav a:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    /* Phone Button (More Visible) */
+    .phone-btn {
+      background: #ff2e77;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      font-size: 16px;
+      box-shadow: 0 6px 18px rgba(255,46,119,0.12);
+      border: 2px solid rgba(255,255,255,0.06);
+    }
+    .phone-btn:active{ transform: translateY(1px) }
+
+    /* Hamburger Menu Button (hidden on desktop) */
+    .hamburger {
+      display: none;
+      font-size: 30px;
+      cursor: pointer;
+      user-select: none;
+      color: white;
+      background: transparent;
+      border-radius: 8px;
+      padding: 6px;
+    }
+
+    /* Slide-in Mobile Menu */
+    .main-nav-panel {
+      position: fixed;
+      top: 0;
+      right: -320px; /* hidden */
+      width: 300px;
+      height: 100vh;
+      background: linear-gradient(180deg,#111,#0b0b0b);
+      padding: 72px 20px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      transition: right .38s cubic-bezier(.22,.9,.26,1);
+      z-index: 2200;
+      box-shadow: -8px 0 30px rgba(0,0,0,0.45);
+      overflow-y:auto;
+    }
+    .main-nav-panel.open {
+      right: 0;
+    }
+    .main-nav-panel .close-menu {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      font-size: 26px;
+      color: #fff;
+      cursor: pointer;
+      background: rgba(255,255,255,0.03);
+      padding: 6px 8px;
+      border-radius: 8px;
+    }
+    .main-nav-panel ul {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      list-style: none;
+      padding: 0;
+    }
+    .main-nav-panel a {
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 8px 6px;
+      border-radius: 8px;
+    }
+    .main-nav-panel a:hover { background: rgba(255,255,255,0.03) }
+
+    /* Mobile Bottom Menu */
+    .mobile-bottom-menu {
+      display: none;
+      position: fixed;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(17,17,17,0.96);
+      padding: 10px 14px;
+      border-radius: 14px;
+      justify-content: space-around;
+      z-index: 2500;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      backdrop-filter: blur(6px);
+    }
+    .mobile-bottom-menu a {
+      color: white;
+      font-size: 22px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      width: 48px;
+      height: 44px;
+    }
+    .mobile-bottom-menu a:active{ transform: translateY(1px) }
+
+    /* ---------- Hero (auto size) ---------- */
+    .hero{margin-top:88px}
+    .hero-img{width:100%;height:auto;display:block;max-height:88vh;object-fit:contain}
+
+    /* ---------- Section base ---------- */
+    .section{padding:72px 0}
+    .centered{text-align:center}
+    .sub{color:var(--muted);margin-top:8px;font-size:17px}
+
+    /* ---------- About (left text, right slider) ---------- */
+    .about-wrap{display:flex;gap:34px;align-items:center;max-width:1200px;margin:0 auto;padding:0 20px}
+    .about-left{flex:1}
+    .about-left h2{font-family:'Playfair Display',serif;font-size:34px;color:var(--pink);margin-bottom:8px}
+    .about-left h3{font-size:22px;margin:12px 0;color:#111}
+    .about-left p{color:var(--muted);font-size:16px}
+    .about-right{width:480px;max-width:45%}
+    .about-slider{position:relative;width:100%;height:360px;border-radius:12px;overflow:hidden;background:#000}
+    .about-slider .slide{position:absolute;inset:0;opacity:0;transition:opacity .7s ease}
+    .about-slider .slide.active{opacity:1}
+    .about-slider img{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* ---------- Services ---------- */
+    .service-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:24px;
+      margin-top:28px
+    }
+    .service{
+      background:#fff;
+      border-radius:12px;
+      padding:18px;
+      border:2px solid var(--pink-light);
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      transition:transform .18s;
+    }
+    .service:hover{transform:translateY(-6px)}
+    .service-icon{font-size:36px}
+
+    /* ---------- CTA ---------- */
+    .cta{padding:70px 0;background:linear-gradient(135deg,var(--pink),var(--blue));color:#fff}
+    .btn-outline{border:2px solid #fff;padding:10px 22px;border-radius:10px;color:#fff;font-weight:700}
+
+    /* ---------- Portfolio ---------- */
+    .portfolio .filters{display:flex;gap:18px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+    .filter-btn{background:none;border:none;font-weight:700;cursor:pointer;padding:8px 10px;color:var(--muted)}
+    .filter-btn.active{color:var(--pink)}
+    .portfolio-grid{
+      margin-top:30px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:22px;
+      transition:opacity .35s,transform .35s
+    }
+    .portfolio-grid.anim-out{opacity:0;transform:translateY(16px)}
+    .pf-item{border-radius:10px;overflow:hidden;background:#fff;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;aspect-ratio:4/3}
+    .pf-item img{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* ---------- Lightbox ---------- */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:2200}
+    .lightbox img{max-width:92%;max-height:86%}
+    .lightbox button{position:absolute;background:rgba(0,0,0,.45);color:#fff;border:none;padding:10px;border-radius:8px;cursor:pointer}
+    .lightbox .close{top:18px;right:18px}
+    .lightbox .prev{left:18px;top:50%}
+    .lightbox .next{right:18px;top:50%}
+
+    /* ---------- Contact ---------- */
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;max-width:1200px;margin:0 auto;padding:0 20px}
+    .info-block{background:#fff;padding:22px;border-radius:12px;border-left:5px solid var(--pink)}
+    .contact-right input,.contact-right textarea{width:100%;padding:12px;border:1px solid #eee;border-radius:10px;margin-bottom:12px}
+    .btn-whatsapp{background:#25d366;color:#fff;border:none;padding:12px 18px;border-radius:30px;font-weight:800;cursor:pointer}
+
+    /* ---------- Footer ---------- */
+    .site-footer{background:#0b0b0b;color:#fff;padding:44px 0;margin-top:40px}
+    .footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1200px;margin:0 auto;padding:0 20px}
+    .footer-grid h4{color:var(--pink);margin-bottom:10px}
+    .footer-bottom{text-align:center;margin-top:18px;color:#bbb}
+    .socials a{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:#111;border-radius:50%;margin-right:8px;color:#fff}
+
+    /* ---------- Floating WA & scroll top ---------- */
+    .float-wa{position:fixed;right:18px;bottom:88px;background:#25d366;color:#fff;padding:12px 14px;border-radius:12px;z-index:2500;cursor:pointer;display:flex;align-items:center;gap:10px}
+    #scrollTop{position:fixed;right:18px;bottom:18px;background:var(--pink);color:#fff;padding:10px;border-radius:8px;border:none;cursor:pointer;display:none;z-index:2400}
+
+    /* ---------- Responsive ---------- */
+    @media(max-width:1000px){
+      .about-wrap{flex-direction:column}
+      .about-right{width:100%;max-width:100%}
+      .contact-grid{grid-template-columns:1fr}
+      .footer-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:900px){
+      .hamburger { display:block; }
+      .main-nav ul { display:none; }
+      .main-nav-panel { display:block; }
+      .phone-btn { display:none; }
+      .mobile-bottom-menu { display:flex; }
+    }
+    @media(max-width:600px){
+      .hero-img{max-height:60vh}
+      .about-slider{height:220px}
+      .float-wa{right:12px;bottom:78px}
+      .logo-line-1{font-size:24px}
+      .logo-line-2{font-size:14px}
+      .footer-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header transparent" id="header" role="banner" aria-label="Main header">
+    <div class="header-inner">
+
+      <div class="logo-text">
+        <span class="logo-line-1">COCOMELON</span>
+        <span class="logo-line-2">KIDS STUDIO</span>
+      </div>
+
+      <!-- Hamburger -->
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">☰</button>
+
+      <!-- Inline desktop nav -->
+      <nav class="main-nav" aria-label="main navigation">
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#portfolio">Portfolio</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Phone Button -->
+      <a class="phone-btn" href="tel:+919959996939" aria-label="Call us">📞 +91 9959996939</a>
+
+    </div>
+
+    <!-- Mobile slide-in nav panel -->
+    <nav id="mobileMenu" class="main-nav-panel" aria-label="mobile navigation" role="navigation" aria-hidden="true">
+      <div class="close-menu" id="closeMenu" aria-label="Close menu">✕</div>
+      <ul>
+        <li><a href="#home" onclick="closeMenu();" role="menuitem">Home</a></li>
+        <li><a href="#about" onclick="closeMenu();" role="menuitem">About Us</a></li>
+        <li><a href="#services" onclick="closeMenu();" role="menuitem">Services</a></li>
+        <li><a href="#portfolio" onclick="closeMenu();" role="menuitem">Portfolio</a></li>
+        <li><a href="#contact" onclick="closeMenu();" role="menuitem">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- STICKY BOTTOM MENU (Mobile Only) -->
+  <div class="mobile-bottom-menu" role="navigation" aria-label="mobile bottom menu">
+    <a href="#home" aria-label="Home">🏠</a>
+    <a href="#services" aria-label="Services">✨</a>
+    <a href="#portfolio" aria-label="Portfolio">📸</a>
+    <a href="#contact" aria-label="Contact">📞</a>
+  </div>
+
+  <!-- HERO -->
+  <section id="home" class="hero" aria-label="hero">
+    <img id="heroSlider" class="hero-img" src="hero1s.webp" alt="hero image">
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="section" aria-labelledby="aboutHeading">
+    <div class="about-wrap">
+      <div class="about-left">
+        <h2 id="aboutHeading">ABOUT US</h2>
+        <p class="sub">We turn your child's precious moments into magical memories.</p>
+        <h3>Capturing the cutest moments 👶✨</h3>
+        <p>From newborns to toddlers — our studio is designed for comfort and creativity. We create playful, safe sets and professional portraits you'll cherish forever.</p>
+      </div>
+
+      <div class="about-right">
+        <div class="about-slider" id="aboutSlider" aria-hidden="false">
+          <div class="slide active"><img src="about1s.webp" alt="about 1"></div>
+          <div class="slide"><img src="about2s.webp" alt="about 2"></div>
+          <div class="slide"><img src="about3s.webp" alt="about 3"></div>
+          <div class="slide"><img src="about4s.webp" alt="about 4"></div>
+          <div class="slide"><img src="about5s.webp" alt="about 5"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" class="section centered" aria-labelledby="servicesHeading">
+    <div class="container">
+      <h2 id="servicesHeading">SERVICES ✨</h2>
+      <p class="sub">We capture every milestone beautifully</p>
+
+      <div class="service-grid" role="list">
+        <!-- UPDATED FIRST CARD TEXT -->
+        <div class="service" role="listitem">
+          <div class="service-icon">🎉</div>
+          <div>
+            <h4>Pre-Birthday Photoshoot</h4>
+            <p>Indoor & outdoor shoots</p>
+          </div>
+        </div>
+
+        <div class="service" role="listitem"><div class="service-icon">🎂</div><div><h4>Cake Smash</h4><p>Fun colorful birthday themes</p></div></div>
+        <div class="service" role="listitem"><div class="service-icon">🤰</div><div><h4>Maternity Photoshoot</h4><p>Elegant indoor & outdoor</p></div></div>
+        <div class="service" role="listitem"><div class="service-icon">👨‍👩‍👧</div><div><h4>Family Portraits</h4><p>Beautiful family moments</p></div></div>
+        <div class="service" role="listitem"><div class="service-icon">📸</div><div><h4>Studio Portraits</h4><p>Premium lighting & backgrounds</p></div></div>
+        <div class="service" role="listitem"><div class="service-icon">✨</div><div><h4>Milestone Photography</h4><p>3, 6, 9 & 12-month shoots</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+      <div style="max-width:800px">
+        <h2 style="margin:0 0 8px;font-size:30px">Book Your Magical Photoshoot Today!</h2>
+        <p style="margin:0;color:rgba(255,255,255,.95)">Capture your child's most precious moments with heartwarming photos you'll treasure forever.</p>
+      </div>
+      <a class="btn-outline" href="#contact">Book a shoot</a>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio" class="section centered" aria-labelledby="portfolioHeading">
+    <div class="container portfolio">
+      <h2 id="portfolioHeading">PORTFOLIO 📸</h2>
+      <p class="sub">Studio | Newborn | Maternity | Milestone | Prebirthday</p>
+
+      <div class="filters" role="tablist" aria-label="portfolio filters" style="margin-top:18px;display:flex;justify-content:center;gap:16px">
+        <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true">ALL</button>
+        <button class="filter-btn" data-filter="studio" role="tab">STUDIO</button>
+        <button class="filter-btn" data-filter="newborn" role="tab">NEW BORN</button>
+        <button class="filter-btn" data-filter="maternity" role="tab">MATERNITY</button>
+        <button class="filter-btn" data-filter="milestone" role="tab">MILESTONE</button>
+        <!-- NEW FILTER -->
+        <button class="filter-btn" data-filter="prebirthday" role="tab">PRE BIRTHDAY</button>
+      </div>
+
+      <div class="portfolio-grid" id="portfolioGrid" aria-live="polite" style="margin-top:28px"></div>
+    </div>
+  </section>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="close" id="lbClose" aria-label="Close">✕</button>
+    <button class="prev" id="lbPrev" aria-label="Previous">◀</button>
+    <img id="lbImg" alt="full image">
+    <button class="next" id="lbNext" aria-label="Next">▶</button>
+  </div>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section" aria-labelledby="contactHeading">
+    <div class="container contact-grid">
+      <div class="info-block" aria-labelledby="contactInfo">
+        <h3 id="contactInfo">Contact & Address</h3>
+        <p><strong>Address:</strong><br>No.6, Back Side Karigiri, Swaroop Nagar Rd, Uppal, Hyderabad, Telangana 500039</p>
+        <p><strong>Phone:</strong><br>+91 9959996939</p>
+        <p><strong>Email:</strong><br>enquiry@cocomelonkidsstudio.com</p>
+        <p><strong>Timings:</strong><br>Mon–Sun: 8 AM – 10 PM</p>
+      </div>
+
+      <div class="contact-right">
+        <form id="contactForm" aria-label="Contact form">
+          <input id="name" placeholder="Your Name" required>
+          <input id="email" placeholder="Your Email" type="email" required>
+          <input id="subject" placeholder="Subject" required>
+          <input id="phone" placeholder="Phone" required>
+          <textarea id="message" rows="5" placeholder="Message" required></textarea>
+          <button class="btn-whatsapp" type="submit">Send to WhatsApp</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" aria-label="Footer">
+    <div class="footer-grid">
+      <div>
+        <h4>Address</h4>
+        <p>No.6, Back Side Karigiri, Swaroop Nagar Rd, Uppal, Hyderabad</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>+91 9959996939<br>enquiry@cocomelonkidsstudio.com</p>
+      </div>
+      <div>
+        <h4>Timings</h4>
+        <p>Mon–Sun: 8 AM – 10 PM</p>
+      </div>
+      <div>
+        <h4>Follow Us</h4>
+        <div class="socials" aria-hidden="false" style="display:flex;align-items:center">
+          <!-- Instagram -->
+          <a href="https://instagram.com" target="_blank" aria-label="Instagram" title="Instagram" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:#111;border-radius:50%;margin-right:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5z" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8a4 4 0 100 8 4 4 0 000-8z" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 6.5h.01" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <!-- Facebook -->
+          <a href="https://facebook.com" target="_blank" aria-label="Facebook" title="Facebook" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:#111;border-radius:50%;margin-right:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M22 12.07C22 6.58 17.52 2 12 2S2 6.58 2 12.07c0 5 3.66 9.13 8.44 9.93v-7.03H7.9v-2.9h2.54V9.4c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.45h-1.25c-1.23 0-1.62.77-1.62 1.56v1.87h2.77l-.44 2.9h-2.33v7.03C18.34 21.2 22 17.08 22 12.07z" stroke="#fff" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <!-- YouTube -->
+          <a href="https://youtube.com" target="_blank" aria-label="YouTube" title="YouTube" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:#111;border-radius:50%;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29.6 29.6 0 001 12a29.6 29.6 0 00.46 5.58 2.78 2.78 0 001.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.96A29.6 29.6 0 0023 12a29.6 29.6 0 00-.46-5.58zM10 15V9l5 3-5 3z" stroke="#fff" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">© 2025 COCOMELON KIDS STUDIO</div>
+  </footer>
+
+  <!-- Floating WhatsApp -->
+  <div class="float-wa" id="floatWA" role="button" aria-label="WhatsApp chat">💬 Chat with us</div>
+
+  <button id="scrollTop" aria-label="Scroll to top">↑</button>
+
+  <script>
+    /* ---------------- HERO IMAGES (auto rotate) ---------------- */
+    const heroImages = ["hero1s.webp","hero2s.webp"];
+    let heroIndex = 0;
+    const heroImgEl = document.getElementById('heroSlider');
+
+    if(heroImages.length > 1){
+      setInterval(()=> {
+        heroIndex = (heroIndex + 1) % heroImages.length;
+        if(heroImgEl) heroImgEl.src = heroImages[heroIndex];
+      }, 3000);
+    }
+
+    /* ---------------- ABOUT RIGHT SLIDER ---------------- */
+    (function(){
+      const slides = Array.from(document.querySelectorAll("#aboutSlider .slide"));
+      if(!slides.length) return;
+      let idx = 0;
+      function show(){
+        slides.forEach(s => s.classList.remove('active'));
+        slides[idx].classList.add('active');
+        idx = (idx + 1) % slides.length;
+      }
+      show();
+      setInterval(show, 5000);
+    })();
+
+    /* ---------------- PORTFOLIO GALLERY ---------------- */
+    const gallery = {
+      studio: ["studio1s.webp","studio2s.webp","studio3s.webp","studio4s.webp","studio5s.webp"],
+      newborn: ["about1s.webp","about2s.webp","about3s.webp"],
+      maternity: ["about4s.webp","about5s.webp"],
+      milestone: ["mile1s.webp","mile2s..webp"],
+      // Option B: Prebirthday category (can include indoor/outdoor themed shots)
+      prebirthday: ["about1s.webp","about2s.webp","about3s.webp","about4s.webp","about5s.webp"]
+    };
+
+    function allImages(){
+      return Object.keys(gallery).flatMap(cat => gallery[cat].map(f => ({cat,file:f})));
+    }
+
+    const grid = document.getElementById("portfolioGrid");
+
+    function renderGrid(filter){
+      grid.classList.add('anim-out');
+      setTimeout(()=>{
+        grid.innerHTML = "";
+        let items = [];
+        if(filter === "all") items = allImages();
+        else if(Array.isArray(gallery[filter])) items = gallery[filter].map(f => ({cat:filter,file:f}));
+
+        if(items.length === 0){
+          const p = document.createElement('p');
+          p.textContent = 'No images found for this category.';
+          p.style.color = 'var(--muted)';
+          p.style.padding = '18px';
+          grid.appendChild(p);
+        } else {
+          items.forEach((it, i) => {
+            const card = document.createElement('div');
+            card.className = 'pf-item';
+            const img = document.createElement('img');
+            img.src = it.file;
+            img.alt = it.file;
+            img.loading = 'lazy';
+            img.addEventListener('error', ()=> img.src = 'https://via.placeholder.com/800x600?text=Missing');
+            card.appendChild(img);
+            card.addEventListener('click', ()=> openLightbox(items, i));
+            grid.appendChild(card);
+          });
+        }
+        grid.classList.remove('anim-out');
+      }, 220);
+    }
+    renderGrid('all');
+
+    document.querySelectorAll('.filter-btn').forEach(btn=>{
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+        this.classList.add('active');
+        renderGrid(this.dataset.filter);
+      });
+    });
+
+    /* ---------------- LIGHTBOX ---------------- */
+    let lbItems = [], lbIndex = 0;
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lbImg');
+    const lbClose = document.getElementById('lbClose');
+    const lbPrev = document.getElementById('lbPrev');
+    const lbNext = document.getElementById('lbNext');
+
+    function openLightbox(items, index){
+      lbItems = items;
+      lbIndex = index;
+      lbImg.src = items[index].file;
+      lb.style.display = 'flex';
+      lb.setAttribute('aria-hidden','false');
+    }
+    function closeLightbox(){
+      lb.style.display = 'none';
+      lb.setAttribute('aria-hidden','true');
+      lbImg.src = '';
+    }
+    function moveLightbox(delta){
+      if(!lbItems.length) return;
+      lbIndex = (lbIndex + delta + lbItems.length) % lbItems.length;
+      lbImg.src = lbItems[lbIndex].file;
+    }
+    lbClose.addEventListener('click', closeLightbox);
+    lbPrev.addEventListener('click', ()=> moveLightbox(-1));
+    lbNext.addEventListener('click', ()=> moveLightbox(1));
+    lb.addEventListener('click', (e)=> { if(e.target === lb) closeLightbox(); });
+    document.addEventListener('keydown', (e)=> {
+      if(lb.style.display === 'flex'){
+        if(e.key === 'ArrowLeft') moveLightbox(-1);
+        if(e.key === 'ArrowRight') moveLightbox(1);
+        if(e.key === 'Escape') closeLightbox();
+      }
+    });
+
+    /* ---------------- CONTACT -> WHATSAPP ---------------- */
+    document.getElementById('contactForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const nameEl = document.getElementById('name');
+      const emailEl = document.getElementById('email');
+      const subjectEl = document.getElementById('subject');
+      const phoneEl = document.getElementById('phone');
+      const messageEl = document.getElementById('message');
+
+      const name = nameEl.value.trim();
+      const email = emailEl.value.trim();
+      const subject = subjectEl.value.trim();
+      const phone = phoneEl.value.trim();
+      const message = messageEl.value.trim();
+
+      if(!name || !email || !subject || !phone || !message){
+        alert('Please fill all fields before sending.');
+        return;
+      }
+
+      const waNumber = '919959996939';
+      const rawText = `Booking Inquiry
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Subject: ${subject}
+Message: ${message}`;
+
+      const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(rawText)}`;
+      window.open(url,'_blank');
+    });
+
+    /* ---------------- FLOATING WHATSAPP ---------------- */
+    document.getElementById('floatWA').addEventListener('click', ()=> window.open('https://wa.me/919959996939','_blank'));
+
+    /* ---------------- SCROLL & HEADER SHADOW ---------------- */
+    const headerEl = document.getElementById('header');
+    const scrollTopBtn = document.getElementById('scrollTop');
+    window.addEventListener('scroll', ()=> {
+      if(window.scrollY > 20){
+        headerEl.classList.add('solid');
+        headerEl.classList.remove('transparent');
+      } else {
+        headerEl.classList.remove('solid');
+        headerEl.classList.add('transparent');
+      }
+      scrollTopBtn.style.display = window.scrollY > 360 ? 'block' : 'none';
+    });
+    scrollTopBtn.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
+
+    /* ---------------- MOBILE MENU OPEN/CLOSE ---------------- */
+    const hamburger = document.getElementById("hamburger");
+    const mobileMenu = document.getElementById("mobileMenu");
+    const closeMenuBtn = document.getElementById("closeMenu");
+
+    function openMenu(){
+      mobileMenu.classList.add("open");
+      mobileMenu.setAttribute('aria-hidden','false');
+      hamburger.setAttribute('aria-expanded','true');
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu(){
+      mobileMenu.classList.remove("open");
+      mobileMenu.setAttribute('aria-hidden','true');
+      hamburger.setAttribute('aria-expanded','false');
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    }
+
+    hamburger.addEventListener('click', openMenu);
+    closeMenuBtn.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', (e)=> {
+      if(e.key === 'Escape' && mobileMenu.classList.contains('open')) closeMenu();
+    });
+    mobileMenu.addEventListener('click', (e)=>{
+      if(e.target.tagName === 'A') closeMenu();
+    });
+  </script>
+</body>
+</html>
